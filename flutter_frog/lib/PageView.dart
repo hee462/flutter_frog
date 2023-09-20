@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hello/end.dart';
+import 'package:hello/strat.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageList extends StatefulWidget {
   const PageList({super.key, this.forg});
@@ -10,7 +12,50 @@ class PageList extends StatefulWidget {
 }
 
 class _PageListState extends State<PageList> {
+  SharedPreferences? _prefs;
   String imagePath = "images/Listcover.png";
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      _prefs = prefs;
+      String? selectedFrog = _prefs!.getString('selectedFrog');
+      if (selectedFrog != null) {
+        setState(() {
+          if (selectedFrog == '청개구리') {
+            imagePath = "images/chungF.png";
+            buttonText = '자세히 보기';
+          }
+        });
+        setState(() {
+          if (selectedFrog == '산개구리') {
+            imagePath3 = "images/sanF.png";
+            buttonText3 = "자세히보기";
+          }
+        });
+        setState(() {
+          if (selectedFrog == '금개구리') {
+            imagePath4 = "images/goldF.png";
+            buttonText4 = "자세히보기";
+          }
+        });
+        setState(() {
+          if (selectedFrog == '참개구리') {
+            imagePath6 = "images/chamF.png";
+            buttonText6 = "자세히보기";
+          }
+        });
+      }
+    });
+  }
+
+// 앱을 초기화할 때 SharedPreferences에서 값을 삭제
+  void _clearSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('selectedFrog');
+  }
+
   String imagePath2 = "images/Listcover.png";
   String imagePath3 = "images/Listcover.png";
   String imagePath4 = "images/Listcover.png";
@@ -22,6 +67,7 @@ class _PageListState extends State<PageList> {
   String buttonText4 = "눌러주세요";
   String buttonText5 = "눌러주세요";
   String buttonText6 = "눌러주세요";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +76,30 @@ class _PageListState extends State<PageList> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const PageEnd()));
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            content: const Text('게임을 다시 할까요?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PageEnd()));
+                                  },
+                                  child: const Text('다른 개구리 획득하기')),
+                              TextButton(
+                                  onPressed: () {
+                                    _clearSharedPreferences();
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PageStart()));
+                                  },
+                                  child: const Text('초기화하기'))
+                            ],
+                          ));
                 },
                 icon: const Icon(Icons.refresh_rounded))
           ],
@@ -55,13 +123,16 @@ class _PageListState extends State<PageList> {
                     fit: BoxFit.fill),
                 borderRadius: BorderRadius.circular(15)),
             child: GestureDetector(
-              onLongPress: () {
+              onLongPress: () async {
                 debugPrint(widget.forg);
                 if (widget.forg == '청개구리') {
                   setState(() {
                     imagePath = "images/chungF.png";
                     buttonText = "자세히보기";
                   });
+                  if (_prefs != null) {
+                    await _prefs!.setString('selectedFrog', '청개구리');
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       duration: Duration(seconds: 1),
@@ -119,7 +190,6 @@ class _PageListState extends State<PageList> {
                 borderRadius: BorderRadius.circular(15)),
             child: GestureDetector(
               onLongPress: () {
-                debugPrint(widget.forg);
                 if (widget.forg == '') {}
                 setState(() {
                   imagePath2 = "images/Listcover.png";
@@ -155,21 +225,21 @@ class _PageListState extends State<PageList> {
                 borderRadius: BorderRadius.circular(15)),
 
             child: GestureDetector(
-              onLongPress: () {
-                debugPrint(widget.forg);
+              onLongPress: () async {
+                debugPrint("@@@@@@@@@@@@@@@@@@@@");
                 if (widget.forg == '산개구리') {
-                  debugPrint(widget.forg);
-                  debugPrint(imagePath);
-
-                  setState(() {
-                    // Image.asset(imagePath = "images/chungF.png");
+                  setState(() async {
                     imagePath3 = "images/sanF.png";
                     buttonText3 = "자세히보기";
                   });
+                  if (_prefs != null) {
+                    await _prefs!.setString('selectedFrog', '산개구리');
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      duration: Duration(seconds: 1),
-                      content: Text('다른 개구리 카드를 선택해주세요!')));
+                    duration: Duration(seconds: 1),
+                    content: Text('다른 개구리 카드를 선택해주세요!'),
+                  ));
                 }
               },
               child: Padding(
@@ -221,17 +291,17 @@ class _PageListState extends State<PageList> {
                     fit: BoxFit.fill),
                 borderRadius: BorderRadius.circular(15)),
             child: GestureDetector(
-              onLongPress: () {
+              onLongPress: () async {
                 debugPrint(widget.forg);
                 if (widget.forg == '금개구리') {
-                  debugPrint(widget.forg);
-                  debugPrint(imagePath);
-
                   setState(() {
                     // Image.asset(imagePath = "images/chungF.png");
                     imagePath4 = "images/goldF.png";
                     buttonText4 = "자세히보기";
                   });
+                  if (_prefs != null) {
+                    await _prefs!.setString('selectedFrog', '금개구리');
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       duration: Duration(seconds: 1),
@@ -289,14 +359,8 @@ class _PageListState extends State<PageList> {
                 borderRadius: BorderRadius.circular(15)),
             child: GestureDetector(
               onLongPress: () {
-                debugPrint(widget.forg);
                 if (widget.forg == '') {}
-                debugPrint(widget.forg);
-                debugPrint(imagePath);
-
                 setState(() {
-                  // Image.asset(imagePath = "images/chungF.png");
-
                   buttonText5 = "  꽝입니다";
                 });
                 if (widget.forg != "") {
@@ -328,17 +392,16 @@ class _PageListState extends State<PageList> {
                     fit: BoxFit.fill),
                 borderRadius: BorderRadius.circular(15)),
             child: GestureDetector(
-              onLongPress: () {
+              onLongPress: () async {
                 debugPrint(widget.forg);
                 if (widget.forg == '참개구리') {
-                  debugPrint(widget.forg);
-                  debugPrint(imagePath);
-
                   setState(() {
-                    // Image.asset(imagePath = "images/chungF.png");
                     imagePath6 = "images/chamF.png";
                     buttonText6 = "자세히보기";
                   });
+                  if (_prefs != null) {
+                    await _prefs!.setString('selectedFrog', '참개구리');
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       duration: Duration(seconds: 1),

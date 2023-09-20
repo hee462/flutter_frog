@@ -107,10 +107,10 @@ class _PageFrog2 extends State<PageFrog2> {
                                   ElevatedButton(
                                       onPressed: () async {
                                         const frogList = [
-                                          '금개구리',
+                                          // '금개구리',
                                           '산개구리',
-                                          '참개구리',
-                                          '청개구리'
+                                          // '참개구리',
+                                          // '청개구리'
                                         ];
                                         var index = Random().nextInt(4);
                                         var forg = frogList[index];
